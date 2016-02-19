@@ -29,7 +29,7 @@ public class ActivityCommand extends ActivitySMB {
         if (mLedDeviceInfo == null || mDeviceStateInfoBase == null) {
             finish();
         }
-
+        //Test Change2
         //calibration time
         BLEPeripheralClient client = ConnectionManager.GetCurrent().getBLEPeripheralClientUniID(mLedDeviceInfo.getMacAddress());
         if (client.getClass() != BLEPeripheralClientTimer.class) {
