@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Smart Bluetooth</string>
+    <string name="scan_bluetooth_device">Scanning,Please what...</string>
+    <string name="loading">Loading...</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="txt_Yes">Yes</string>
+    <string name="txt_No">No</string>
+    <string name="unsupported">Unsupported device</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="gradual">Gradual</string>
+    <string name="flash">Flash</string>
+    <string name="saltus">Saltus</string>
+    <string name="refresh">Refresh</string>
+    <string name="bluetooth_miss_title">Bluetooth4.0 not supported.</string>
+    <string name="bluetooth_miss">Can find Bluetooth 4.0 Adapter,Please use other Bluetooth 4.0 phones.</string>
+    <string name="send_predefined_timer">Send Predefined Timer</string>
+    <string name="timer_failed">Failed to add timer, please try again</string>
+    <string name="timer_successful">Previous task will be failed antomatic once user add a new task of three timers as a group</string>
+</resources>
