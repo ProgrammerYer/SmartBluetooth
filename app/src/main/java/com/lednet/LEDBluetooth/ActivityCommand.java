@@ -12,12 +12,10 @@ import com.lednet.LEDBluetooth.COMM.LedDeviceInfo;
 
 import java.util.Calendar;
 
-
 public class ActivityCommand extends ActivitySMB {
 
     private LedDeviceInfo mLedDeviceInfo;
     private DeviceStateInfoBase mDeviceStateInfoBase;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +27,7 @@ public class ActivityCommand extends ActivitySMB {
         if (mLedDeviceInfo == null || mDeviceStateInfoBase == null) {
             finish();
         }
-        //Test Change2
+
         //calibration time
         BLEPeripheralClient client = ConnectionManager.GetCurrent().getBLEPeripheralClientUniID(mLedDeviceInfo.getMacAddress());
         if (client.getClass() != BLEPeripheralClientTimer.class) {
