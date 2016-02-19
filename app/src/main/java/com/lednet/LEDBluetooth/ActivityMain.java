@@ -102,7 +102,7 @@ public class ActivityMain extends ActivitySMB implements Observer {
         }
 
     }
-
+    //Scan Bluetooth Device
     private void startScanDevice(BluetoothAdapter adapter) {
 
         ConnectionManager.CreatConnectionManager(adapter, thisActivity());
