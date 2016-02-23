@@ -13,8 +13,8 @@
     <string name="saltus">Saltus</string>
     <string name="refresh">Refresh</string>
     <string name="bluetooth_miss_title">Bluetooth4.0 not supported.</string>
-    <string name="bluetooth_miss">Can find Bluetooth 4.0 Adapter,Please use other Bluetooth 4.0 phones.</string>
+    <string name="bluetooth_miss">Can not find Bluetooth 4.0 Adapter,Please use other Bluetooth 4.0 phones.</string>
     <string name="send_predefined_timer">Send Predefined Timer</string>
     <string name="timer_failed">Failed to add timer, please try again</string>
-    <string name="timer_successful">Previous task will be failed antomatic once user add a new task of three timers as a group</string>
+    <string name="timer_successful">Add three timer, light will swith on atfer 1 minute, switch off after 2 minutes and change to red after 3 minutes.</string>
 </resources>
