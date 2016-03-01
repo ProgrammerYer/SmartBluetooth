@@ -17,4 +17,5 @@
     <string name="send_predefined_timer">Send Predefined Timer</string>
     <string name="timer_failed">Failed to add timer, please try again</string>
     <string name="timer_successful">Add three timer, light will swith on atfer 1 minute, switch off after 2 minutes and change to red after 3 minutes.</string>
+    <string name="permission_notify">App need permission If you device is Android6.0</string>
 </resources>

@@ -1,13 +1,18 @@
 package com.lednet.LEDBluetooth;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,24 +33,61 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class ActivityMain extends ActivitySMB implements Observer {
-    ActivityMain me = this;
 
+    public static final int REQUEST_FINE_LOCATION = 11;
     public final static int REQUEST_ENABLE_BT = 2;
+
+    private ActivityMain me = this;
     private ListView mListView;
     private ArrayList<LedDeviceInfo> mDeviceLists = new ArrayList();
     private AdapterActivityMain mAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothManager mBluetoothManager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
-        init();
+        initUserView();
+        checkPermission();
+
+    }
+
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            int checkPermission = ContextCompat.checkSelfPermission(me,
+                    Manifest.permission.ACCESS_COARSE_LOCATION);
+            if (checkPermission != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    Snackbar.make(mListView, "App need the permissions to run",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("OK", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    ActivityCompat.requestPermissions(me,
+                                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_FINE_LOCATION);
+                                }
+                            })
+                            .show();
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_FINE_LOCATION);
+                }
+
+                return;
+            }
+
+        }
         initializeBLE();
     }
 
-    private void init() {
+
+    private void initUserView() {
         mListView = (ListView) findViewById(R.id.mian_listview);
         mAdapter = new AdapterActivityMain(mDeviceLists, me);
         mListView.setAdapter(mAdapter);
@@ -102,6 +144,7 @@ public class ActivityMain extends ActivitySMB implements Observer {
         }
 
     }
+
     //Scan Bluetooth Device
     private void startScanDevice(BluetoothAdapter adapter) {
 
@@ -123,6 +166,16 @@ public class ActivityMain extends ActivitySMB implements Observer {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == REQUEST_FINE_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initializeBLE();
+            } else {
+                finish();
+            }
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -144,7 +197,9 @@ public class ActivityMain extends ActivitySMB implements Observer {
 
     @Override
     protected void onDestroy() {
-        ConnectionManager.GetCurrent().deleteObserver(this);
+        if (ConnectionManager.GetCurrent() != null) {
+            ConnectionManager.GetCurrent().deleteObserver(this);
+        }
         super.onDestroy();
     }
 
@@ -195,7 +250,7 @@ public class ActivityMain extends ActivitySMB implements Observer {
                     } else {
                         Toast.makeText(me, me.getText(R.string.unsupported), Toast.LENGTH_SHORT).show();
                     }
-                }else {
+                } else {
                     Toast.makeText(me, me.getText(R.string.connection_failed), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -214,7 +269,7 @@ public class ActivityMain extends ActivitySMB implements Observer {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id ==R.id.action_refresh) {
+        if (id == R.id.action_refresh) {
 
             startScanDevice(mBluetoothAdapter);
             return true;
