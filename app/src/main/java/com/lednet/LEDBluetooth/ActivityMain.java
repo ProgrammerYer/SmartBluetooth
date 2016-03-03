@@ -6,10 +6,12 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -35,6 +37,7 @@ import java.util.Observer;
 public class ActivityMain extends ActivitySMB implements Observer {
 
     public static final int REQUEST_FINE_LOCATION = 11;
+    public static final int REQUEST_LOCATION_STATE = 12;
     public final static int REQUEST_ENABLE_BT = 2;
 
     private ActivityMain me = this;
@@ -49,14 +52,22 @@ public class ActivityMain extends ActivitySMB implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_main);
         initUserView();
-        checkPermission();
+        checkLocation();
+    }
 
+    private boolean checkLocationState() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void checkPermission() {
+
         if (Build.VERSION.SDK_INT >= 23) {
             int checkPermission = ContextCompat.checkSelfPermission(me,
                     Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -64,7 +75,7 @@ public class ActivityMain extends ActivitySMB implements Observer {
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    Snackbar.make(mListView, "App need the permissions to run",
+                    Snackbar.make(mListView, getString(R.string.need_permission),
                             Snackbar.LENGTH_INDEFINITE)
                             .setAction("OK", new View.OnClickListener() {
                                 @Override
@@ -86,6 +97,21 @@ public class ActivityMain extends ActivitySMB implements Observer {
         initializeBLE();
     }
 
+    private void checkLocation() {
+        if (checkLocationState()) {
+            checkPermission();
+        } else {
+            showAlertDialog("", getString(R.string.open_location), new OnConfirmListener() {
+
+                @Override
+                public void onConfirm(boolean confirm) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivityForResult(intent, REQUEST_LOCATION_STATE);
+                }
+            });
+
+        }
+    }
 
     private void initUserView() {
         mListView = (ListView) findViewById(R.id.mian_listview);
@@ -166,16 +192,6 @@ public class ActivityMain extends ActivitySMB implements Observer {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (requestCode == REQUEST_FINE_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initializeBLE();
-            } else {
-                finish();
-            }
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -185,7 +201,14 @@ public class ActivityMain extends ActivitySMB implements Observer {
             } else {
                 me.finish();
             }
+        } else if (requestCode == REQUEST_LOCATION_STATE) {
+            if (checkLocationState()) {
+                checkPermission();
+            } else {
+                finish();
+            }
         }
+
     }
 
     @Override
@@ -277,4 +300,14 @@ public class ActivityMain extends ActivitySMB implements Observer {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == REQUEST_FINE_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initializeBLE();
+            } else {
+                finish();
+            }
+        }
+    }
 }
