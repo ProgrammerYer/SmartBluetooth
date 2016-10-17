@@ -58,6 +58,9 @@ public class ActivityMain extends ActivitySMB implements Observer {
     }
 
     private boolean checkLocationState() {
+        if (Build.VERSION.SDK_INT < 23) {
+            return true;
+        }
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             return true;
